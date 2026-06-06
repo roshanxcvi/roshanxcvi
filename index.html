@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roshan Nathani — Security Researcher · Extension Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root[data-theme="dark"]{
+  --bg:#0a0a0a;--bg-soft:#111;--bg-card:#151515;--bg-hover:#1c1c1c;
+  --border:rgba(255,255,255,0.08);--border-hover:rgba(255,255,255,0.15);
+  --text:#b8b8b8;--text-bright:#f5f5f5;--text-dim:#666;
+  --accent:#7dd3a0;--accent-dim:#5bb87a;--accent-bg:rgba(125,211,160,0.08);--accent-border:rgba(125,211,160,0.18);
+  --shadow-sm:0 2px 12px rgba(0,0,0,0.2);--grain:0.015;
+}
+:root[data-theme="light"]{
+  --bg:#fafaf7;--bg-soft:#f3f3ef;--bg-card:#fff;--bg-hover:#f8f8f5;
+  --border:rgba(0,0,0,0.08);--border-hover:rgba(0,0,0,0.15);
+  --text:#3d3d3b;--text-bright:#18181b;--text-dim:#888;
+  --accent:#16a34a;--accent-dim:#15803d;--accent-bg:rgba(22,163,74,0.08);--accent-border:rgba(22,163,74,0.2);
+  --shadow-sm:0 2px 12px rgba(0,0,0,0.04);--grain:0.025;
+}
+:root{--font-serif:'Instrument Serif',Georgia,serif;--font-sans:'Inter',system-ui,sans-serif;--font-mono:'Geist Mono','SF Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased;transition:background 0.4s,color 0.4s;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:1;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");opacity:var(--grain);mix-blend-mode:overlay}
+a{color:inherit;text-decoration:none}
+.page{max-width:600px;margin:0 auto;padding:0 1.5rem 5rem;position:relative;z-index:2}
+::selection{background:var(--accent);color:var(--bg)}
+
+/* Header */
+.header{padding:2.5rem 0 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.header-logo{font-family:var(--font-mono);font-size:0.78rem;color:var(--text-dim);transition:color 0.3s}.header-logo:hover{color:var(--text-bright)}.header-logo .a{color:var(--accent)}
+.header-right{display:flex;align-items:center;gap:0.75rem}
+
+/* Visitor counter */
+.visitor-counter{font-family:var(--font-mono);font-size:0.68rem;color:var(--text-dim);display:flex;align-items:center;gap:0.35rem;padding:0.3rem 0.65rem;background:var(--bg-card);border:1px solid var(--border);border-radius:100px;transition:all 0.3s}
+.visitor-counter .vc-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:blink 2s ease-in-out infinite}
+.visitor-counter .vc-num{color:var(--accent);font-weight:500}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* Toggle */
+.theme-toggle{position:relative;width:52px;height:26px;border-radius:100px;background:var(--bg-card);border:1px solid var(--border);cursor:pointer;transition:all 0.3s;display:flex;align-items:center;padding:0 4px}
+.theme-toggle:hover{border-color:var(--border-hover)}
+.theme-toggle-slider{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--accent);transition:transform 0.35s cubic-bezier(0.68,-0.55,0.265,1.55);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.2)}
+[data-theme="light"] .theme-toggle-slider{transform:translateX(26px)}
+.theme-toggle svg{width:10px;height:10px;color:var(--bg);transition:opacity 0.3s}
+
+.divider{height:1px;background:var(--border);margin:1.75rem 0}
+
+/* Profile */
+.profile{text-align:center;padding:1.5rem 0 2rem}
+.avatar-wrap{position:relative;display:inline-block;margin-bottom:1.25rem}
+.avatar{width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--accent-bg),var(--bg-card));border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);font-size:2.4rem;color:var(--accent);position:relative;overflow:hidden}
+.avatar::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,var(--accent-bg),transparent 60%)}
+.status-dot{position:absolute;bottom:2px;right:2px;width:14px;height:14px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);animation:pulse 2.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 var(--accent-bg)}50%{box-shadow:0 0 0 6px transparent}}
+.profile h1{font-family:var(--font-serif);font-size:clamp(1.8rem,4vw,2.2rem);font-weight:400;color:var(--text-bright);letter-spacing:-0.5px;margin-bottom:0.4rem;line-height:1.1}
+.profile .tagline{font-family:var(--font-mono);font-size:0.78rem;color:var(--text-dim);margin-bottom:1rem}
+.profile .status-badge{display:inline-flex;align-items:center;gap:0.45rem;padding:0.35rem 0.85rem;border-radius:100px;background:var(--accent-bg);border:1px solid var(--accent-border);font-size:0.72rem;color:var(--accent);font-family:var(--font-mono)}
+.profile .status-badge .dot{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:blink 2s ease-in-out infinite}
+
+/* Sections */
+.section{margin-bottom:2rem}
+.section-title{font-family:var(--font-serif);font-size:1.25rem;font-weight:400;color:var(--text-bright);margin-bottom:1rem;letter-spacing:-0.3px;display:flex;align-items:baseline;gap:0.5rem}
+.section-title .num{font-family:var(--font-mono);font-size:0.7rem;color:var(--text-dim)}
+
+/* About */
+.about p{font-size:0.92rem;color:var(--text);margin-bottom:0.9rem;line-height:1.8;position:relative;padding-left:1rem}
+.about p::before{content:'';position:absolute;left:0;top:0.75em;width:4px;height:4px;border-radius:50%;background:var(--accent)}
+
+/* Connect */
+.connect-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.5rem}
+.connect-link{display:flex;align-items:center;gap:0.6rem;padding:0.7rem 0.9rem;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;font-size:0.85rem;color:var(--text);transition:all 0.25s;position:relative;overflow:hidden}
+.connect-link::after{content:'↗';position:absolute;right:0.9rem;opacity:0;transform:translate(-4px,4px);transition:all 0.25s;font-size:0.75rem;color:var(--accent)}
+.connect-link:hover{background:var(--bg-hover);border-color:var(--accent-border);color:var(--text-bright);transform:translateY(-1px)}
+.connect-link:hover::after{opacity:1;transform:translate(0,0)}
+.connect-link svg{width:15px;height:15px;fill:currentColor;flex-shrink:0;opacity:0.65;transition:all 0.25s}
+.connect-link:hover svg{opacity:1;color:var(--accent)}
+
+/* Skills */
+.skills-wrap{display:flex;flex-wrap:wrap;gap:0.4rem}
+.skill-pill{font-family:var(--font-mono);font-size:0.7rem;padding:0.35rem 0.8rem;border-radius:100px;background:var(--bg-card);color:var(--text);border:1px solid var(--border);transition:all 0.2s}
+.skill-pill:hover{background:var(--accent-bg);color:var(--accent);border-color:var(--accent-border);transform:translateY(-1px)}
+
+/* Projects */
+.project-item{display:block;padding:1.1rem 1.2rem;background:var(--bg-card);border:1px solid var(--border);border-radius:14px;margin-bottom:0.6rem;transition:all 0.3s;position:relative;overflow:hidden}
+.project-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent);transform:scaleY(0);transition:transform 0.3s;transform-origin:top}
+.project-item:hover{border-color:var(--border-hover);background:var(--bg-hover);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+.project-item:hover::before{transform:scaleY(1)}
+.project-item .p-label{font-family:var(--font-mono);font-size:0.62rem;color:var(--accent);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:0.3rem;font-weight:500}
+.project-item h3{font-family:var(--font-serif);font-size:1.15rem;font-weight:400;color:var(--text-bright);margin-bottom:0.25rem;letter-spacing:-0.2px}
+.project-item p{font-size:0.84rem;color:var(--text-dim);line-height:1.6;max-width:480px}
+.project-item .p-arrow{position:absolute;right:1.2rem;top:50%;transform:translateY(-50%);font-size:1rem;color:var(--text-dim);transition:all 0.3s}
+.project-item:hover .p-arrow{color:var(--accent);transform:translateY(-50%) translateX(3px)}
+.project-featured{border-color:var(--accent-border);background:linear-gradient(135deg,var(--accent-bg),var(--bg-card))}
+.project-featured .p-badge{display:inline-block;font-family:var(--font-mono);font-size:0.58rem;padding:0.2rem 0.5rem;border-radius:4px;background:var(--accent);color:var(--bg);margin-bottom:0.5rem;font-weight:500;letter-spacing:0.5px;text-transform:uppercase}
+
+/* Achievements */
+.achievement-item{display:flex;gap:0.9rem;align-items:flex-start;padding:0.9rem 0;border-bottom:1px solid var(--border);transition:padding 0.3s}
+.achievement-item:last-child{border-bottom:none}
+.achievement-item:hover{padding-left:0.4rem}
+.a-icon{width:34px;height:34px;border-radius:9px;background:var(--accent-bg);border:1px solid var(--accent-border);display:flex;align-items:center;justify-content:center;font-size:0.95rem;flex-shrink:0}
+.a-info h4{font-size:0.88rem;font-weight:600;color:var(--text-bright);margin-bottom:0.15rem}
+.a-info p{font-size:0.8rem;color:var(--text-dim);line-height:1.55}
+
+/* Quote */
+.quote-block{margin:2rem 0 1.5rem;padding:1.5rem 1.75rem;background:var(--bg-card);border:1px solid var(--border);border-radius:14px;position:relative}
+.quote-block::before{content:'\201C';position:absolute;top:-0.2rem;left:1rem;font-family:var(--font-serif);font-size:3.5rem;color:var(--accent);line-height:1;opacity:0.3}
+.quote-block p{font-family:var(--font-serif);font-size:1.1rem;font-style:italic;color:var(--text-bright);line-height:1.6;margin-bottom:0.6rem;padding-left:1.2rem;letter-spacing:-0.2px}
+.quote-block cite{font-family:var(--font-mono);font-size:0.7rem;color:var(--text-dim);font-style:normal;padding-left:1.2rem;display:block}
+
+/* Footer */
+.footer{text-align:center;padding:2rem 0 0;border-top:1px solid var(--border);margin-top:2rem}
+.footer p{font-family:var(--font-mono);font-size:0.68rem;color:var(--text-dim)}
+.footer .heart{color:var(--accent);display:inline-block;animation:heartbeat 1.5s ease-in-out infinite}
+@keyframes heartbeat{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+
+/* Pixel pet */
+.pixel-pet{position:fixed;z-index:100;pointer-events:none;image-rendering:pixelated}
+.pixel-pet canvas{image-rendering:pixelated;image-rendering:crisp-edges}
+
+/* Reveal */
+.r{opacity:0;transform:translateY(16px);transition:opacity 0.6s cubic-bezier(0.16,1,0.3,1),transform 0.6s cubic-bezier(0.16,1,0.3,1)}
+.r.v{opacity:1;transform:translateY(0)}
+.d1{transition-delay:0.05s}.d2{transition-delay:0.1s}.d3{transition-delay:0.15s}.d4{transition-delay:0.2s}.d5{transition-delay:0.25s}
+
+@media(max-width:500px){.page{padding:0 1.25rem 4rem}.connect-grid{grid-template-columns:1fr}.header{padding:2rem 0 1rem}.header-right{gap:0.5rem}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- Header -->
+<div class="header">
+<a href="#" class="header-logo">roshan<span class="a">.</span>nathani</a>
+<div class="header-right">
+<div class="visitor-counter"><span class="vc-dot"></span><span class="vc-num" id="visitorCount">—</span> visitors</div>
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"><div class="theme-toggle-slider"><svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div></button>
+</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- Profile -->
+<div class="profile r">
+<div class="avatar-wrap"><div class="avatar">R</div><div class="status-dot"></div></div>
+<h1>Roshan Nathani</h1>
+<div class="tagline">Security Researcher · Bug Bounty Hunter · Extension Developer</div>
+<div class="status-badge"><span class="dot"></span>Available for collaboration</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- About -->
+<div class="section about r d1">
+<h2 class="section-title">About <span class="num">/01</span></h2>
+<p>I'm an independent security researcher focused on finding and reporting vulnerabilities before they can be exploited. My work spans web application security, API testing, and browser extension development.</p>
+<p>I build open-source security tools — from interactive OWASP guides to AI tracker blockers. The best defense is built in the open, by the community.</p>
+<p>I code in Python, JavaScript, Flutter, and Dart. When I'm not hunting bugs, I'm creating tools that make the web a safer, cleaner place.</p>
+</div>
+
+<div class="divider"></div>
+
+<!-- Connect -->
+<div class="section r d2">
+<h2 class="section-title">Connect <span class="num">/02</span></h2>
+<div class="connect-grid">
+<a href="https://github.com/roshanxcvi" target="_blank" rel="noopener" class="connect-link"><svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>GitHub</a>
+<a href="https://twitter.com/roshanxcvi" target="_blank" rel="noopener" class="connect-link"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>Twitter</a>
+<a href="mailto:vegarx64@proton.me" class="connect-link"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>Email</a>
+</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- Skills -->
+<div class="section r d3">
+<h2 class="section-title">Skills <span class="num">/03</span></h2>
+<div class="skills-wrap">
+<span class="skill-pill">Python</span><span class="skill-pill">JavaScript</span><span class="skill-pill">Flutter</span><span class="skill-pill">Dart</span><span class="skill-pill">Bug Bounty</span><span class="skill-pill">OWASP</span><span class="skill-pill">Pentesting</span><span class="skill-pill">API Security</span><span class="skill-pill">Chrome Extensions</span><span class="skill-pill">Manifest V3</span>
+</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- Projects -->
+<div class="section r d4">
+<h2 class="section-title">Projects <span class="num">/04</span></h2>
+
+<a href="https://roshanxcvi.github.io/Veil/" target="_blank" rel="noopener" class="project-item project-featured">
+<div class="p-badge">★ Featured</div>
+<div class="p-label">Chrome Extension · Privacy</div>
+<h3>Veil — AI & Behavior Tracker Blocker</h3>
+<p>Blocks trackers profiling you for AI training, behavioral analytics, and marketing — then shows you exactly what every site tried to collect. 76 trackers across 8 categories.</p>
+<span class="p-arrow">→</span>
+</a>
+
+<a href="https://roshanxcvi.github.io/zenith-adblocker-chrome/" target="_blank" rel="noopener" class="project-item">
+<div class="p-label">Browser Extension</div>
+<h3>Zenith Ad Blocker</h3>
+<p>A fast, efficient Chrome ad blocker for a cleaner browsing experience.</p>
+<span class="p-arrow">→</span>
+</a>
+
+<a href="https://roshanxcvi.github.io/owasp-wstg-guide/" target="_blank" rel="noopener" class="project-item">
+<div class="p-label">Security Tool</div>
+<h3>OWASP WSTG Guide</h3>
+<p>Interactive reference for the OWASP Web Security Testing Guide.</p>
+<span class="p-arrow">→</span>
+</a>
+
+<a href="https://roshanxcvi.github.io/bugcrowd-vrt/" target="_blank" rel="noopener" class="project-item">
+<div class="p-label">Security Reference</div>
+<h3>Bugcrowd VRT Explorer</h3>
+<p>Browsable interface for Bugcrowd's Vulnerability Rating Taxonomy.</p>
+<span class="p-arrow">→</span>
+</a>
+</div>
+
+<div class="divider"></div>
+
+<!-- Achievements -->
+<div class="section r d5">
+<h2 class="section-title">Achievements <span class="num">/05</span></h2>
+<div class="achievement-item"><div class="a-icon">🏆</div><div class="a-info"><h4>Bug Bounty Hunter</h4><p>Actively finding and reporting vulnerabilities across platforms.</p></div></div>
+<div class="achievement-item"><div class="a-icon">🔍</div><div class="a-info"><h4>Security Researcher</h4><p>Independent research on web application and API security.</p></div></div>
+<div class="achievement-item"><div class="a-icon">🛠️</div><div class="a-info"><h4>Open Source Contributor</h4><p>Building security tools used by the developer community.</p></div></div>
+<div class="achievement-item"><div class="a-icon">📚</div><div class="a-info"><h4>Community Educator</h4><p>Creating accessible guides for web security testing.</p></div></div>
+</div>
+
+<!-- Quote -->
+<div class="quote-block r">
+<p>I break things to understand them, and I build things to make them stronger.</p>
+<cite>— Roshan Nathani</cite>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+<p>© 2026 roshanxcvi · Built with <span class="heart">♥</span> and curiosity</p>
+</div>
+
+</div>
+
+<script>
+// ─── THEME TOGGLE ───
+const root=document.documentElement,toggle=document.getElementById('themeToggle'),themeIcon=document.getElementById('themeIcon');
+const sunI=`<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>`;
+const moonI=`<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
+const saved=localStorage.getItem('theme')||'dark';root.setAttribute('data-theme',saved);themeIcon.innerHTML=saved==='dark'?moonI:sunI;
+toggle.addEventListener('click',()=>{const c=root.getAttribute('data-theme'),n=c==='dark'?'light':'dark';root.setAttribute('data-theme',n);localStorage.setItem('theme',n);themeIcon.innerHTML=n==='dark'?moonI:sunI});
+
+// ─── UNIQUE VISITOR COUNTER ───
+(async function(){
+  const el=document.getElementById('visitorCount');
+  const STORAGE_KEY='roshan_portfolio_visited';
+  const COUNTER_NS='roshanxcvi-portfolio';
+  const COUNTER_KEY='unique-visitors';
+  
+  try {
+    // Check if this is a new unique visitor
+    const visited = localStorage.getItem(STORAGE_KEY);
+    
+    if (!visited) {
+      // New visitor — increment counter
+      const res = await fetch(`https://api.counterapi.dev/v1/${COUNTER_NS}/${COUNTER_KEY}/up`);
+      const data = await res.json();
+      el.textContent = data.count.toLocaleString();
+      localStorage.setItem(STORAGE_KEY, 'true');
+    } else {
+      // Returning visitor — just get current count
+      const res = await fetch(`https://api.counterapi.dev/v1/${COUNTER_NS}/${COUNTER_KEY}`);
+      const data = await res.json();
+      el.textContent = data.count.toLocaleString();
+    }
+  } catch(e) {
+    // Fallback if API fails
+    el.textContent = '—';
+  }
+})();
+
+// ─── SCROLL REVEAL ───
+const obs=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting){en.target.classList.add('v');obs.unobserve(en.target)}})},{threshold:0.1,rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.r').forEach(el=>obs.observe(el));
+
+// ─── PIXEL PETS ───
+class PP{constructor(d,s){this.s=s||3;this.fw=d.frameW;this.fh=d.frameH;this.frames=d.frames;this.idle=d.idleFrames;this.walk=d.walkFrames;this.colors=d.colors;this.el=document.createElement('div');this.el.classList.add('pixel-pet');this.c=document.createElement('canvas');this.c.width=this.fw*this.s;this.c.height=this.fh*this.s;this.ctx=this.c.getContext('2d');this.ctx.imageSmoothingEnabled=false;this.el.appendChild(this.c);document.body.appendChild(this.el);this.x=Math.random()*(innerWidth-60);this.y=innerHeight-this.fh*this.s-10;this.vx=0;this.dir=1;this.state='idle';this.frame=0;this.tick=0;this.timer=0;this.pick()}
+pick(){const r=Math.random();if(r<0.4){this.state='idle';this.timer=80+Math.random()*200;this.vx=0}else if(r<0.55){this.state='sleep';this.timer=200+Math.random()*300;this.vx=0}else{this.state='walk';this.timer=100+Math.random()*200;this.dir=Math.random()<0.5?-1:1;this.vx=this.dir*(0.3+Math.random()*0.5)}this.frame=0}
+update(){this.tick++;this.timer--;if(this.timer<=0)this.pick();if(this.state==='walk'){this.x+=this.vx;if(this.x<-10){this.x=-10;this.dir=1;this.vx=Math.abs(this.vx)}if(this.x>innerWidth-30){this.x=innerWidth-30;this.dir=-1;this.vx=-Math.abs(this.vx)}}if(this.tick%12===0){const p=this.state==='walk'?this.walk:this.idle;this.frame=(this.frame+1)%p.length}this.y=innerHeight-this.fh*this.s-10;this.el.style.left=this.x+'px';this.el.style.top=this.y+'px';this.el.style.transform=this.dir<0?'scaleX(-1)':'scaleX(1)';this.render()}
+render(){const p=this.state==='walk'?this.walk:this.idle;const fd=this.frames[p[this.frame%p.length]];const s=this.s;this.ctx.clearRect(0,0,this.c.width,this.c.height);for(let y=0;y<this.fh;y++)for(let x=0;x<this.fw;x++){const ci=fd[y*this.fw+x];if(ci>0){this.ctx.fillStyle=this.colors[ci];this.ctx.fillRect(x*s,y*s,s,s)}}if(this.state==='sleep'&&this.tick%40<20){this.ctx.fillStyle='#7dd3a0';this.ctx.font=(8*(s/3))+'px monospace';this.ctx.fillText('z',(this.fw-2)*s,2*s)}}}
+
+const catD={frameW:12,frameH:10,colors:['','#525252','#737373','#7dd3a0','#e5e5e5','#262626','#a3a3a3'],idleFrames:[0,1],walkFrames:[2,3,4,3],frames:[[0,0,0,1,1,0,0,1,1,0,0,0,0,0,1,5,1,1,1,1,5,1,0,0,0,0,1,2,2,2,2,2,2,1,0,0,0,0,1,5,2,2,2,5,2,1,0,0,0,0,0,1,2,4,2,2,1,0,0,0,0,0,0,1,2,2,2,2,1,0,0,0,0,0,0,1,2,2,2,2,1,0,0,0,0,0,0,1,2,2,2,2,1,0,0,0,0,0,0,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,1,1,0,0,1,1,0,0,0,0,0,1,5,1,1,1,1,5,1,0,0,0,0,1,2,2,2,2,2,2,1,0,0,0,0,1,1,2,2,2,1,2,1,0,0,0,0,0,1,2,4,2,2,1,0,0,0,0,0,0,1,2,2,2,2,1,0,0,0,0,0,0,1,2,2,2,2,1,0,0,0,0,0,0,1,2,2,2,2,1,0,0,0,0,0,0,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,1,1,0,0,1,1,0,0,0,0,0,1,5,1,1,1,1,5,1,0,0,0,0,1,2,2,2,2,2,2,1,0,0,0,0,1,5,2,2,2,5,2,1,0,0,0,0,0,1,2,4,2,2,1,0,0,0,0,0,0,1,2,2,2,2,1,0,0,0,0,0,0,1,2,2,2,2,1,0,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,1,1,0,0,1,1,0,0,0,0,0,1,5,1,1,1,1,5,1,0,0,0,0,1,2,2,2,2,2,2,1,0,0,0,0,1,5,2,2,2,5,2,1,0,0,0,0,0,1,2,4,2,2,1,0,0,0,0,0,0,1,2,2,2,2,1,0,0,0,0,0,0,0,1,2,2,1,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,1,1,0,0,1,1,0,0,0,0,0,1,5,1,1,1,1,5,1,0,0,0,0,1,2,2,2,2,2,2,1,0,0,0,0,1,5,2,2,2,5,2,1,0,0,0,0,0,1,2,4,2,2,1,0,0,0,0,0,0,1,2,2,2,2,1,0,0,0,0,0,0,1,2,2,2,2,1,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]};
+const birdD={frameW:10,frameH:8,colors:['','#525252','#7dd3a0','#5bb87a','#e5e5e5','#262626','#bbf7d0'],idleFrames:[0,1],walkFrames:[2,3,2,3],frames:[[0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,2,2,2,1,0,0,0,0,0,1,5,2,2,1,0,0,0,0,0,0,1,2,3,1,0,0,0,0,0,0,1,2,2,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,1,1,1,0,0,0,0,0,0,1,2,2,2,1,0,0,0,0,0,1,5,2,2,1,0,0,0,0,0,0,1,2,3,1,0,0,0,0,0,0,1,2,2,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,1,1,1,0,0,0,0,0,1,1,2,2,2,1,1,0,0,0,0,1,5,2,2,1,0,0,0,0,0,0,1,2,3,1,0,0,0,0,0,0,1,2,2,1,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,1,1,1,0,0,0,0,0,0,1,2,2,2,1,0,0,0,0,0,1,5,2,2,1,0,0,0,0,1,0,1,2,3,1,0,1,0,0,0,0,1,2,2,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]};
+const pets=[new PP(catD,3),new PP(birdD,3)];
+pets[0].x=innerWidth*0.25;pets[1].x=innerWidth*0.75;
+function ap(){pets.forEach(p=>p.update());requestAnimationFrame(ap)}ap();
+</script>
+</body>
+</html>
