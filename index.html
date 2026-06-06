@@ -252,33 +252,33 @@ const moonI=`<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
 const saved=localStorage.getItem('theme')||'dark';root.setAttribute('data-theme',saved);themeIcon.innerHTML=saved==='dark'?moonI:sunI;
 toggle.addEventListener('click',()=>{const c=root.getAttribute('data-theme'),n=c==='dark'?'light':'dark';root.setAttribute('data-theme',n);localStorage.setItem('theme',n);themeIcon.innerHTML=n==='dark'?moonI:sunI});
 
-// ─── UNIQUE VISITOR COUNTER ───
-(async function(){
-  const el=document.getElementById('visitorCount');
-  const STORAGE_KEY='roshan_portfolio_visited';
-  const COUNTER_NS='roshanxcvi-portfolio';
-  const COUNTER_KEY='unique-visitors';
+// ─── UNIQUE VISITOR COUNTER (GoatCounter) ───
+// Setup: 1) Sign up free at https://goatcounter.com
+//        2) Create site, pick a code (e.g. "roshanxcvi")  
+//        3) Replace YOURCODE below with your code
+(function(){
+  const el = document.getElementById('visitorCount');
+  const GC_CODE = 'cipher007goatcountercom'; // ← your GoatCounter code
   
-  try {
-    // Check if this is a new unique visitor
-    const visited = localStorage.getItem(STORAGE_KEY);
-    
-    if (!visited) {
-      // New visitor — increment counter
-      const res = await fetch(`https://api.counterapi.dev/v1/${COUNTER_NS}/${COUNTER_KEY}/up`);
-      const data = await res.json();
-      el.textContent = data.count.toLocaleString();
-      localStorage.setItem(STORAGE_KEY, 'true');
-    } else {
-      // Returning visitor — just get current count
-      const res = await fetch(`https://api.counterapi.dev/v1/${COUNTER_NS}/${COUNTER_KEY}`);
-      const data = await res.json();
-      el.textContent = data.count.toLocaleString();
-    }
-  } catch(e) {
-    // Fallback if API fails
-    el.textContent = '—';
-  }
+  // Fetch total unique visitor count from GoatCounter API
+  fetch(`https://${GC_CODE}.goatcounter.com/counter/.json`)
+    .then(r => r.json())
+    .then(data => {
+      const count = data.count_unique || data.count || 0;
+      // Animate the number counting up
+      let current = 0;
+      const target = parseInt(count);
+      if (target === 0) { el.textContent = '0'; return; }
+      const step = Math.max(1, Math.floor(target / 30));
+      const timer = setInterval(() => {
+        current += step;
+        if (current >= target) { current = target; clearInterval(timer); }
+        el.textContent = current.toLocaleString();
+      }, 30);
+    })
+    .catch(() => {
+      el.textContent = '—';
+    });
 })();
 
 // ─── SCROLL REVEAL ───
@@ -297,5 +297,7 @@ const pets=[new PP(catD,3),new PP(birdD,3)];
 pets[0].x=innerWidth*0.25;pets[1].x=innerWidth*0.75;
 function ap(){pets.forEach(p=>p.update());requestAnimationFrame(ap)}ap();
 </script>
+<!-- GoatCounter tracking (free, privacy-friendly) -->
+<script data-goatcounter="https://cipher007goatcountercom.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
