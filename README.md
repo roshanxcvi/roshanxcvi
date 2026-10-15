@@ -9,6 +9,7 @@ Personal portfolio of **Roshan Nathani** — Security Researcher, Bug Bounty Hun
 | Project | Description |
 |---------|-------------|
 | [Veil](https://roshanxcvi.github.io/Veil/) | AI & Behavior Tracker Blocker — blocks 76 trackers across 8 categories |
+| [BiteWise](https://roshanxcvi.github.io/bitewise/) | Free Indian food diary — 1,600+ foods with nutrition from ICMR-NIN, works offline |
 | [Zenith Ad Blocker](https://roshanxcvi.github.io/zenith-adblocker-chrome/) | Fast, efficient Chrome ad blocker |
 | [OWASP WSTG Guide](https://roshanxcvi.github.io/owasp-wstg-guide/) | Interactive OWASP Web Security Testing Guide |
 | [Bugcrowd VRT](https://roshanxcvi.github.io/bugcrowd-vrt/) | Browsable Bugcrowd Vulnerability Rating Taxonomy |
