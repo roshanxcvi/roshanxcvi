@@ -257,7 +257,7 @@ toggle.addEventListener('click',()=>{const c=root.getAttribute('data-theme'),n=c
 // GoatCounter caches counts for up to 4 hours, so a brand-new visitor isn't in the number yet.
 // We remember the count this browser first saw and add this visitor's own +1 until GoatCounter catches up.
 (function(){
-  const GC = 'https://cipher007goatcountercom.goatcounter.com';
+  const GC = 'https://cipher007.goatcounter.com';
   const pill = document.getElementById('visitorPill'), el = document.getElementById('visitorCount'), plus = document.getElementById('visitorPlus');
   const KEY = 'gc_seen_v1';
   const num = s => parseInt(String(s).replace(/[^\d]/g, ''), 10) || 0;   // "1,234" -> 1234
@@ -275,7 +275,7 @@ toggle.addEventListener('click',()=>{const c=root.getAttribute('data-theme'),n=c
   }
   let seen = null; try { seen = JSON.parse(localStorage.getItem(KEY)); } catch(e) {}
   async function update(first){
-    let server; try { server = await fetchCount(); } catch(e) { if (first) el.textContent = 'new!'; return; }
+    let server; try { server = await fetchCount(); } catch(e) { if (first) el.textContent = '—'; return; }
     let total = server, newVisitor = false;
     if (!seen) { seen = {base: server}; newVisitor = true; try { localStorage.setItem(KEY, JSON.stringify(seen)); } catch(e) {} }
     if (server <= seen.base) total = seen.base + 1;               // GoatCounter hasn't counted this visitor yet
