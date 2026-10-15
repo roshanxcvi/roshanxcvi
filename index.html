@@ -40,6 +40,11 @@ a{color:inherit;text-decoration:none}
 .visitor-counter .vc-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:blink 2s ease-in-out infinite}
 .visitor-counter .vc-num{color:var(--accent);font-weight:500}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.visitor-counter{position:relative}
+.vc-plus{position:absolute;right:8px;top:-2px;font-family:var(--font-mono);font-size:0.68rem;font-weight:600;color:var(--accent);opacity:0;pointer-events:none}
+.vc-plus.on{animation:vcplus 2.2s ease-out}
+@keyframes vcplus{0%{opacity:0;transform:translateY(4px)}15%{opacity:1;transform:translateY(-10px)}70%{opacity:1;transform:translateY(-14px)}100%{opacity:0;transform:translateY(-18px)}}
+@media(prefers-reduced-motion:reduce){.vc-plus.on{animation:none}}
 
 /* Toggle */
 .theme-toggle{position:relative;width:52px;height:26px;border-radius:100px;background:var(--bg-card);border:1px solid var(--border);cursor:pointer;transition:all 0.3s;display:flex;align-items:center;padding:0 4px}
@@ -137,7 +142,7 @@ a{color:inherit;text-decoration:none}
 <div class="header">
 <a href="#" class="header-logo">roshan<span class="a">.</span>nathani</a>
 <div class="header-right">
-<div class="visitor-counter"><span class="vc-dot"></span><span class="vc-num" id="visitorCount">—</span> visitors</div>
+<div class="visitor-counter" id="visitorPill" title="Visitors to this portfolio"><span class="vc-dot"></span><span class="vc-num" id="visitorCount">—</span> visitors<span class="vc-plus" id="visitorPlus" aria-hidden="true">+1</span></div>
 <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"><div class="theme-toggle-slider"><svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div></button>
 </div>
 </div>
@@ -248,36 +253,38 @@ const moonI=`<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
 const saved=localStorage.getItem('theme')||'dark';root.setAttribute('data-theme',saved);themeIcon.innerHTML=saved==='dark'?moonI:sunI;
 toggle.addEventListener('click',()=>{const c=root.getAttribute('data-theme'),n=c==='dark'?'light':'dark';root.setAttribute('data-theme',n);localStorage.setItem('theme',n);themeIcon.innerHTML=n==='dark'?moonI:sunI});
 
-// ─── UNIQUE VISITOR COUNTER (GoatCounter) ───
+// ─── VISITOR COUNTER (GoatCounter) ───
+// GoatCounter caches counts for up to 4 hours, so a brand-new visitor isn't in the number yet.
+// We remember the count this browser first saw and add this visitor's own +1 until GoatCounter catches up.
 (function(){
-  const el = document.getElementById('visitorCount');
-  const GC_CODE = 'cipher007'; // ← your GoatCounter code
-  
-  // Fetch visitor count from GoatCounter public API
-  // Uses %2f for the homepage path "/"
-  fetch(`https://${GC_CODE}.goatcounter.com/counter/%2f.json`)
-    .then(r => {
-      if (!r.ok) throw new Error('API error');
-      return r.json();
-    })
-    .then(data => {
-      const count = parseInt(data.count_unique || data.count) || 0;
-      if (count === 0) {
-        el.textContent = 'new!';
-      } else {
-        // Animate counting up
-        let current = 0;
-        const step = Math.max(1, Math.floor(count / 30));
-        const timer = setInterval(() => {
-          current += step;
-          if (current >= count) { current = count; clearInterval(timer); }
-          el.textContent = current.toLocaleString();
-        }, 30);
-      }
-    })
-    .catch(() => {
-      el.textContent = 'new!';
-    });
+  const GC = 'https://cipher007goatcountercom.goatcounter.com';
+  const pill = document.getElementById('visitorPill'), el = document.getElementById('visitorCount'), plus = document.getElementById('visitorPlus');
+  const KEY = 'gc_seen_v1';
+  const num = s => parseInt(String(s).replace(/[^\d]/g, ''), 10) || 0;   // "1,234" -> 1234
+  const show = n => el.textContent = n.toLocaleString('en-IN');
+  function animate(from, to, done){
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches || to - from < 2) { show(to); done && done(); return; }
+    const t0 = performance.now(), dur = 900;
+    (function f(t){ const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); show(Math.round(from + (to - from) * e)); k < 1 ? requestAnimationFrame(f) : (done && done()); })(t0);
+  }
+  async function get(path){ const r = await fetch(`${GC}/counter/${encodeURIComponent(path)}.json`, {cache:'no-store'}); if (!r.ok) throw r.status; return num((await r.json()).count); }
+  async function fetchCount(){
+    const p = location.pathname, tries = [p, p.replace(/\/$/, '') || '/', p.endsWith('/') ? p + 'index.html' : p + '/', 'TOTAL'];
+    for (const t of tries) { try { return await get(t); } catch(e) {} }
+    throw new Error('no count');
+  }
+  let seen = null; try { seen = JSON.parse(localStorage.getItem(KEY)); } catch(e) {}
+  async function update(first){
+    let server; try { server = await fetchCount(); } catch(e) { if (first) el.textContent = 'new!'; return; }
+    let total = server, newVisitor = false;
+    if (!seen) { seen = {base: server}; newVisitor = true; try { localStorage.setItem(KEY, JSON.stringify(seen)); } catch(e) {} }
+    if (server <= seen.base) total = seen.base + 1;               // GoatCounter hasn't counted this visitor yet
+    pill.title = `${total.toLocaleString('en-IN')} people have visited this portfolio. Counted privately with GoatCounter; the total refreshes every few hours.`;
+    if (first) animate(0, newVisitor ? total - 1 : total, () => { if (newVisitor) { show(total); plus.classList.add('on'); setTimeout(() => plus.classList.remove('on'), 2200); } });
+    else show(total);
+  }
+  update(true);
+  setInterval(() => document.visibilityState === 'visible' && update(false), 5 * 60 * 1000);
 })();
 
 // ─── SCROLL REVEAL ───
@@ -297,6 +304,6 @@ pets[0].x=innerWidth*0.25;pets[1].x=innerWidth*0.75;
 function ap(){pets.forEach(p=>p.update());requestAnimationFrame(ap)}ap();
 </script>
 <!-- GoatCounter tracking (free, privacy-friendly) -->
-<script data-goatcounter="https://cipher007goatcountercom.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script data-goatcounter="https://cipher007.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
